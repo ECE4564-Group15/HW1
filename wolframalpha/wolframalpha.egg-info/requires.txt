@@ -1,0 +1,3 @@
+six
+xmltodict
+jaraco.itertools>=2.0

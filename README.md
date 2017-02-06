@@ -11,12 +11,8 @@ USAGE TYPE: Personal/Non-commercial Only
 ## Tweet API key
 Consumer Key (API Key)	bPqfYmH4yYQw5ZkUhuSYZIIpd (manage keys and access tokens)
 
-Sign in with Twitter	Yes
+Consumer Secret (API Secret)	IBsm0SrLSR3uKynCYppo0YDa5tThawD5h4lQ2BNFvlNYS6UhZp
 
-App-only authentication	https://api.twitter.com/oauth2/token
+Access Token	1456947205-4hpgqmfBh92YtMuTL60oIcFVmMVRaWp4NJYQcyA
 
-Request token URL	https://api.twitter.com/oauth/request_token
-
-Authorize URL	https://api.twitter.com/oauth/authorize
-
-Access token URL	https://api.twitter.com/oauth/access_token
+Access Token Secret	IgvVo2Jg6bSN5LjholkZUHkrBnEcfHSKF4TOHNc9X3vxw

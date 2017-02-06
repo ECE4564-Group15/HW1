@@ -11,6 +11,7 @@
 ##       communicate from between client and server.
 
 import tweepy
+import sys
 
 CONSUMER_KEY = "bPqfYmH4yYQw5ZkUhuSYZIIpd";
 CONSUMER_SECRET = "IBsm0SrLSR3uKynCYppo0YDa5tThawD5h4lQ2BNFvlNYS6UhZp";
@@ -22,5 +23,5 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 
 api = tweepy.API(auth)
-api.update_status('tweepy + oauth!')
+api.update_status(sys.argv[1])
 

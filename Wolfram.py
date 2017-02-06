@@ -18,7 +18,8 @@ import socket
 client = wolframalpha.Client("HXV625-27RGEV674Q"); # add app id;
 
 res = client.query(argv[1]); # question
-answer = next(res.results).text
+answer = next(res.results).text 
+print(answer)
 
 host = 'localhost'
 # host = '192.168.1.108'

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python
 
 """
 A simple echo client
@@ -12,11 +12,16 @@ host = 'localhost'
 # host = '192.168.1.108'
 port = 50000
 size = 1024
-os.system('python Tweet.py @username#hostname:port_question')
+cmd = "python Tweet.py @lbc0430"+'#' +host +':' + str(port) +'_' + sys.argv[1]
+print(cmd)
+
+os.system(cmd)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((host,port))
 user_input = sys.argv[1]
 s.send(user_input)
 data = s.recv(size)
 s.close()
-os.system('python Tweet.py $data' )
+post = "python Tweet.py " + data
+os.system(post)
+

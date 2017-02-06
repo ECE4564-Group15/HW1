@@ -9,7 +9,7 @@ import os
 import sys
 
 host = ''
-port = 50000
+port = 6666
 backlog = 5
 size = 1024
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,7 +18,9 @@ s.listen(backlog)
 while 1:
     client, address = s.accept()
     data = client.recv(size)
-    os.system('python Wolfram.py', data)
+    cmd = "python Wolfram.py" + data
+    print (cmd)
+    os.system(cmd)
     if data:
         client.send(data)
     client.close()

@@ -6,9 +6,7 @@
 
 ##TODO
 
-1. wolfram alpha does not receive and send answers to server, so the server 
-
-   cannot send answer back to client
+1. The server needs a loop to receive data from client and receive the data from wolfram, when receive data from client, send the contents to wolfram; when receives from wolfram, send data to client and tweet;
 
 2. multi-answer does not implemnt
 

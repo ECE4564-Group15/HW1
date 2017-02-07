@@ -33,20 +33,22 @@ api = API(auth)
 class SFREDStreamListener(StreamListener):
 
     def invalid_format(self,tweet):
-            api.update_status("Invalid format. Use '@sfred_bot #server.address:port_\"Question here\"'"+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+            api.update_status("@%s Invalid format. Use '@me #server.address:port_\"Question here\"'"%(tweet.user.screen_name)+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
     
     def invalid_address(self,tweet,reason):
-            api.update_status("Invalid address: "+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+            api.update_status("@%sInvalid address: "%(tweet.user.screen_name)+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
 
     def tweet_error(self,tweet,reason):
-            api.update_status("Error: "+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+            api.update_status("@%s Error: "%(tweet.user.sreen_name)+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
     
     def send_reply(self,response,tweet):
         if response is not None:
+            toReply = tweet
             for r in response:
                 print("Tweeted: "+r)
                 r = "@%s %s" %(tweet.user.screen_name,r)
-                api.update_status(r,in_reply_to_status_id = tweet.in_reply_to_status_id)
+                toReply = api.update_status(r,in_reply_to_status_id = toReply.id)
+                
 
     def send_question(self,payload,tweet):
         size = 2048

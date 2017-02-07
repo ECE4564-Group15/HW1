@@ -16,6 +16,9 @@ from tweepy import Stream
 from tweepy import API
 import hashlib
 import re
+import socket
+import pickle
+import random
 
 CONSUMER_KEY = "AVoVfyfpBW2ULsVSebtLQEpO9";
 CONSUMER_SECRET = "iUXnIABiyiC11ok9obagtTzg43SHDtBg4pHidj0qsTn2CT3wdb";
@@ -29,10 +32,59 @@ api = API(auth)
 
 class SFREDStreamListener(StreamListener):
 
-    def invalid_format(self):
-            api.update_status("Invalid format. Use '@sfred_bot #server.address:port_\"Question here\"'",in_reply_to_status_id = tweet.in_reply_to_status_id)
-        
+    def invalid_format(self,tweet):
+            api.update_status("Invalid format. Use '@sfred_bot #server.address:port_\"Question here\"'"+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+    
+    def invalid_address(self,tweet,reason):
+            api.update_status("Invalid address: "+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
 
+    def tweet_error(self,tweet,reason):
+            api.update_status("Error: "+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+    
+    def send_reply(self,response,tweet):
+        if response is not None:
+            for r in response:
+                print("Tweeted: "+r)
+                r = "@%s %s" %(tweet.user.screen_name,r)
+                api.update_status(r,in_reply_to_status_id = tweet.in_reply_to_status_id)
+
+    def send_question(self,payload,tweet):
+        size = 2048
+        s = None
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((payload[0][0],int(payload[0][1])))
+
+            #create a new tuple and pickle it
+            toSend = (payload[2],payload[1],)
+            print("Asking: "+str(toSend))
+            toSend = pickle.dumps(toSend)
+            s.send(toSend)
+            response = s.recv(size)
+            #unpickle
+            response = pickle.loads(response)
+            print(response)
+            answer = response[1]
+            #compare hash
+            md5 = hashlib.md5()
+            md5.update(answer.encode())
+            md5_a = md5.hexdigest()
+            print(md5_a + ' : ' + answer)
+            if md5_a == response[0]:
+                #split the answer
+                response = [s.strip() for s in answer.splitlines()]
+                return response
+            #else
+            s.close()
+            self.tweet_error(tweet,'Error receiving answer from server. Incorrect hash')
+            return None
+        except socket.error or EOFError as message:
+            if s:
+                s.close()
+            self.invalid_address(tweet,message)
+            return None
+        #else        
+        
     def parse_tweet(self,tweet):
         #need the text
         text = tweet.text
@@ -49,7 +101,7 @@ class SFREDStreamListener(StreamListener):
                 md5.update(quest.encode())
                 md5 = md5.hexdigest()
                 return (address,quest,md5,)
-        self.invalid_format()    
+        self.invalid_format(tweet)    
         return None
 
     def on_status(self, status):
@@ -61,12 +113,14 @@ class SFREDStreamListener(StreamListener):
             #send message and wait for response
             print ("Success")
             print (payload)
+            response = self.send_question(payload,status)
+            self.send_reply(response,status)
         return True
 
-if __name__ == '__main__':
+def main():
     sl = SFREDStreamListener()
-
+    random.seed()
     stream = Stream(auth = auth, listener=sl)
 
     stream.filter(track=['@sfred_bot'])
-
+main()

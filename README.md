@@ -54,6 +54,12 @@ APP NAME: Tweet wolframalpha Q&A
 APPID: HXV625-27RGEV674Q
 
 USAGE TYPE: Personal/Non-commercial Only
+---
+APP NAME: Twitter Bot
+
+APPID: AHJ6PV-E7ULX75PHV
+
+USAGE: Personal
 
 
 ## Tweet API key
@@ -71,3 +77,4 @@ Access Token:
 Access Token Secret: 
 
     IgvVo2Jg6bSN5LjholkZUHkrBnEcfHSKF4TOHNc9X3vxw
+

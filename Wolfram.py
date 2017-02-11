@@ -18,36 +18,48 @@ import hashlib
 
 def serverLoop(s,size,wolf):
     while 1:
-        #get the data
-        client, address = s.accept()
-        data = client.recv(size)
-        if data:
-            data = pickle.loads(data)
-            print(data)
-            #data is in format (md5,q)
-            question = data[1]
-            md5_q = hashlib.md5()
-            md5_q.update(question.encode())
-            md5_q = md5_q.hexdigest()
-            if md5_q == data[0]:
-                #good, ask q
-                print("Good md5")
-                res = wolf.query(question)
-                res = next(res.results).text
-                print(res)
-            else:
-                print("Bad md5")
-                res = "Error answering the question. Sorry"    
+        client = None
+        try:
+            #get the data
+            client, address = s.accept()
+            data = client.recv(size)
+            if data:
+                data = pickle.loads(data)
+                print(data)
+                #data is in format (md5,q)
+                #check to make sure the sent hash is good
+                question = data[1]
+                md5_q = hashlib.md5()
+                md5_q.update(question.encode())
+                md5_q = md5_q.hexdigest()
+                #check
+                if md5_q == data[0]:
+                    #good, ask q
+                    print("Good md5")
+                    try:
+                        res = wolf.query(question)
+                        res = next(res.results).text
+                    except Exception:
+                        res = "Error answering the question. Sorry."
+                    print(res)
+                else:
+                    print("Bad md5")
+                    res = "Error answering the question. Sorry"    
 
-            md5_a = hashlib.md5()
-            md5_a.update(res.encode())
-            md5_a = md5_a.hexdigest()
-            answer = (md5_a,res)
-            print(md5_a + ' : ' + res)
-            print(answer)
-            answer = pickle.dumps(answer)
-            client.send(answer)            
-        client.close()
+                md5_a = hashlib.md5()
+                md5_a.update(res.encode())
+                md5_a = md5_a.hexdigest()
+                answer = (md5_a,res)
+                print(md5_a + ' : ' + res)
+                print(answer)
+                answer = pickle.dumps(answer)
+                client.send(answer)
+        except socket.error:
+            print("Socket error :(.")
+        finally:
+            if client:
+                client.close()            
+    
 
 def main():
     client = wolframalpha.Client("AHJ6PV-E7ULX75PHV") # add app id;

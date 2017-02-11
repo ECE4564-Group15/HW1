@@ -16,19 +16,26 @@ import sys
 import pickle
 import hashlib
 
+#main loop of the server
+#accepts connections and handles them
 def serverLoop(s,size,wolf):
+    #LOOP
     while 1:
+        #connection
         client = None
+        res = ""
         try:
-            #get the data
+            #conenct and get the data
             client, address = s.accept()
             data = client.recv(size)
+            #if good data
             if data:
+                #try to look at data
                 data = pickle.loads(data)
                 print(data)
                 #data is in format (md5,q)
                 #check to make sure the sent hash is good
-                question = data[1]
+                question = data[1]a
                 md5_q = hashlib.md5()
                 md5_q.update(question.encode())
                 md5_q = md5_q.hexdigest()
@@ -37,37 +44,45 @@ def serverLoop(s,size,wolf):
                     #good, ask q
                     print("Good md5")
                     try:
+                        #ask question
                         res = wolf.query(question)
                         res = next(res.results).text
+                    #if there is some problem with wolfram then we need to let the client know
                     except Exception:
                         res = "Error answering the question. Sorry."
-                    print(res)
+                    finally:
+                        print(res)
                 else:
                     print("Bad md5")
                     res = "Error answering the question. Sorry"    
-
+                #compute the hash to send back
                 md5_a = hashlib.md5()
                 md5_a.update(res.encode())
                 md5_a = md5_a.hexdigest()
+                #create the tuple to send
                 answer = (md5_a,res)
-                print(md5_a + ' : ' + res)
                 print(answer)
+                #pickle
                 answer = pickle.dumps(answer)
+                #send
                 client.send(answer)
         except socket.error:
             print("Socket error :(.")
+        #always disconnect and close
         finally:
             if client:
                 client.close()            
-    
 
 def main():
+    #connect to service
     client = wolframalpha.Client("AHJ6PV-E7ULX75PHV") # add app id;
+    #socket constants
     host = 'localhost'
     port = 9005
     size = 2048
     backlog = 1
     s = None
+    #attempt to connect
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
@@ -78,6 +93,7 @@ def main():
             s.close()
             print ("Could not open socket: " + str(message))
             sys.exit(1)
-
-    serverLoop(s,size,client)
+    #if all is good then start the loop
+    else:
+        serverLoop(s,size,client)
 main()

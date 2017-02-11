@@ -19,25 +19,42 @@ import re
 import socket
 import pickle
 import random
+import itertools
 
-#some useful constants
-#setup begin able to send tweets
-auth = None
-api = None
 reply_user = None
+class APIData:
+    def __init__(self,CK,CS,AK,AS,user):
+        #create the api
+        self.auth = OAuthHandler(CK,CS)
+        self.auth.set_access_token(AK,AS)
+        self.api = API(self.auth)
+
+        self.reply_user = user
 
 #custom listener class
 class SFREDStreamListener(StreamListener):
+
+    def set_api_data(self,api_data):
+        self.api_data=api_data
     
     #various error tweeting methods
     def invalid_format(self,tweet):
-            api.update_status("@%s Invalid format. Use '@me #server.address:port_\"Question here\"'"%(reply_user)+str(random.randint(0,1000)))
+        try:
+            self.api_data.api.update_status("@%s Invalid format. Use '@me #server.address:port_\"Question here\"' #"%(self.api_data.reply_user)+str(random.randint(0,10000)))
+        except tweepy.TweepError as e:
+            print("Error sending tweet: "+str(e.message))
     
     def invalid_address(self,tweet,reason):
-            api.update_status("@%sInvalid address: "%(reply_user)+reason+str(random.randint(0,1000)))
+        try:
+            self.api_data.api.update_status("@%sInvalid address: "%(self.api_data.reply_user)+reason+' #'+str(random.randint(0,10000)))
+        except tweepy.TweepError as e:
+            print("Error sending tweet: "+str(e.message))
 
     def tweet_error(self,tweet,reason):
-            api.update_status("@%s Error: "%(reply_user)+reason+str(random.randint(0,1000)))
+        try:
+            self.api_data.api.update_status("@%s Error: "%(self.api_data.reply_user)+reason+' #'+str(random.randint(0,10000)))
+        except tweepy.TweepError as e:
+            print("Error sending tweet: "+str(e.message))
     
     #This method sends evey element in a given response array
     #expects that each element is a string or can be implicitly converted to a string
@@ -51,13 +68,16 @@ class SFREDStreamListener(StreamListener):
             for r in response:
                 print("Tweeted: "+r)
                 #prepend the @
-                r = "@%s %s" %(reply_user,r)
-                #first tweet
-                if toReply is None:
-                    toReply = api.update_status(r)
-                #not first
-                else:
-                    toReply = api.update_status(r,in_reply_to_status_id = toReply.id)
+                r = "@%s %s #" %(self.api_data.reply_user,r) + str(random.randint(0,10000))
+                try:
+                    #first tweet
+                    if toReply is None:
+                        toReply = self.api_data.api.update_status(r)
+                    #not first
+                    else:
+                        toReply = self.api_data.api.update_status(r,in_reply_to_status_id = toReply.id)
+                except tweepy.TweepError as e:
+                    print("Error sending tweet: "+str(e.message))
 
     #This method tries to send a question to the server as epcified by the user
     #it then returns the response from the server
@@ -93,6 +113,9 @@ class SFREDStreamListener(StreamListener):
             if md5_a == response[0]:
                 #split the answer by lines (will tweet line by line)
                 response = [s.strip() for s in answer.splitlines()]
+                n = 123 #124 because of @user and random int
+                #refactor the response list to be <=124 characters per entry
+                response = [r[i:i+n] for r in response for i in range(0,len(r),n)]
             #if bad hash for some reason
             else:
                 self.tweet_error(tweet,'Error receiving answer from server. Incorrect hash')
@@ -160,25 +183,16 @@ class SFREDStreamListener(StreamListener):
         return True
 
 def main():
+    #create the 'secret' data
+    api_data = APIData("AVoVfyfpBW2ULsVSebtLQEpO9","iUXnIABiyiC11ok9obagtTzg43SHDtBg4pHidj0qsTn2CT3wdb","825049989705560065-I22v2Fgp2HDTTdPt9XZssT2blrL3N3M","eI9uGprtn1Eum42NfqEatPz6ljUQKP6aWLEh7K99ZKTEk","VTNetApps")
     #listener instance
     sl = SFREDStreamListener()
+    sl.set_api_data(api_data)
     #we use this all the time
     random.seed()
-    #these are secret! please don't look at them!
-    CONSUMER_KEY = "AVoVfyfpBW2ULsVSebtLQEpO9";
-    CONSUMER_SECRET = "iUXnIABiyiC11ok9obagtTzg43SHDtBg4pHidj0qsTn2CT3wdb";
-    #these too
-    ACCESS_KEY = "825049989705560065-I22v2Fgp2HDTTdPt9XZssT2blrL3N3M";
-    ACCESS_SECRET = "eI9uGprtn1Eum42NfqEatPz6ljUQKP6aWLEh7K99ZKTEk";
-    #assign values
-    auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
-    api = API(auth)
     #create the stream object
-    stream = Stream(auth = auth, listener=sl)
+    stream = Stream(auth = api_data.auth, listener=sl)
     #make sure it loooks at the right tweets
     stream.filter(track=['@sfred_bot'])
-    #repy to the right user
-    reply_user = "VTNetApps"
 #start the whole thing
 main()

@@ -30,29 +30,34 @@ auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = API(auth)
 
+reply_user = "VTNetApps"
+
 class SFREDStreamListener(StreamListener):
 
     def invalid_format(self,tweet):
-            api.update_status("@%s Invalid format. Use '@me #server.address:port_\"Question here\"'"%(tweet.user.screen_name)+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+            api.update_status("@%s Invalid format. Use '@me #server.address:port_\"Question here\"'"%(reply_user)+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
     
     def invalid_address(self,tweet,reason):
-            api.update_status("@%sInvalid address: "%(tweet.user.screen_name)+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+            api.update_status("@%sInvalid address: "%(reply_user)+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
 
     def tweet_error(self,tweet,reason):
-            api.update_status("@%s Error: "%(tweet.user.sreen_name)+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
+            api.update_status("@%s Error: "%(reply_user)+reason+str(random.randint(0,1000)),in_reply_to_status_id = tweet.in_reply_to_status_id)
     
     def send_reply(self,response,tweet):
         if response is not None:
-            toReply = tweet
+            toReply = None
             for r in response:
                 print("Tweeted: "+r)
-                r = "@%s %s" %(tweet.user.screen_name,r)
-                toReply = api.update_status(r,in_reply_to_status_id = toReply.id)
-                
+                r = "@%s %s" %(reply_user,r)
+                if toReply is None:
+                    toReply = api.update_status(r)
+                else:
+                    toReply = api.update_status(r,in_reply_to_status_id = toReply.id)
 
     def send_question(self,payload,tweet):
         size = 2048
         s = None
+        response = None
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((payload[0][0],int(payload[0][1])))
@@ -65,28 +70,27 @@ class SFREDStreamListener(StreamListener):
             response = s.recv(size)
             #unpickle
             response = pickle.loads(response)
-            print(response)
+            print("Got: "+str(response))
             answer = response[1]
             #compare hash
             md5 = hashlib.md5()
             md5.update(answer.encode())
             md5_a = md5.hexdigest()
-            print(md5_a + ' : ' + answer)
             if md5_a == response[0]:
                 #split the answer
                 response = [s.strip() for s in answer.splitlines()]
-                return response
-            #else
-            s.close()
-            self.tweet_error(tweet,'Error receiving answer from server. Incorrect hash')
-            return None
-        except socket.error or EOFError as message:
+            else:
+                self.tweet_error(tweet,'Error receiving answer from server. Incorrect hash')
+        except socket.error as message:
+            self.invalid_address(tweet,message)
+        except EOFError:
+            self.tweet_error(tweet,'Error receiving answer from server.')
+        finally:
             if s:
                 s.close()
-            self.invalid_address(tweet,message)
-            return None
-        #else        
-        
+            s.close()
+        return response 
+
     def parse_tweet(self,tweet):
         #need the text
         text = tweet.text

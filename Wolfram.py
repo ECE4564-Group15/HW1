@@ -35,7 +35,7 @@ def serverLoop(s,size,wolf):
                 print(data)
                 #data is in format (md5,q)
                 #check to make sure the sent hash is good
-                question = data[1]a
+                question = data[1]
                 md5_q = hashlib.md5()
                 md5_q.update(question.encode())
                 md5_q = md5_q.hexdigest()
@@ -72,7 +72,8 @@ def serverLoop(s,size,wolf):
         finally:
             if client:
                 client.close()            
-
+#main function
+#settup and calls the main loop
 def main():
     #connect to service
     client = wolframalpha.Client("AHJ6PV-E7ULX75PHV") # add app id;

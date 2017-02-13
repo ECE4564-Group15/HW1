@@ -73,7 +73,7 @@ class SFREDStreamListener(StreamListener):
             for r in response:
                 print("Tweeted: "+r)
                 #prepend the @
-                r = "@%s %s %s #%s" %(self.api_data.reply_user,r,self.api_data.team,str(random.randint(0,10000)))
+                r = "@%s %s %s #%s" %(self.api_data.reply_user,self.api_data.team,r,str(random.randint(0,10000)))
                 try:
                     #first tweet
                     if toReply is None:

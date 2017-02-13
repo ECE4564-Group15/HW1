@@ -10,6 +10,7 @@
 ## TODO: install tweet
 ##       communicate from between client and server.
 
+import tweepy
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -184,7 +185,7 @@ class SFREDStreamListener(StreamListener):
 
 def main():
     #create the 'secret' data
-    api_data = APIData("AVoVfyfpBW2ULsVSebtLQEpO9","iUXnIABiyiC11ok9obagtTzg43SHDtBg4pHidj0qsTn2CT3wdb","825049989705560065-I22v2Fgp2HDTTdPt9XZssT2blrL3N3M","eI9uGprtn1Eum42NfqEatPz6ljUQKP6aWLEh7K99ZKTEk","VTNetApps")
+    api_data = APIData("MunHmfkcGOdcPgLJCKWVmmxRy","9EeZwxwBtp1I4L0YfWIw0ulkGzn7QDEXJqOf3fwSo6SuoZYBxP","2267448878-zRbsDXI16X3zdQYXz3LwvUjIDReYEeMiT3gaSri","Ud8dVaLAjxeJld1LbAvKy8e5WPNCzW8MpcvTAxjc1TVJJ","VTNetApps")
     #listener instance
     sl = SFREDStreamListener()
     sl.set_api_data(api_data)
@@ -193,6 +194,6 @@ def main():
     #create the stream object
     stream = Stream(auth = api_data.auth, listener=sl)
     #make sure it loooks at the right tweets
-    stream.filter(track=['@sfred_bot'])
+    stream.filter(track=['@guhao6869'])
 #start the whole thing
 main()

@@ -88,7 +88,7 @@ class SFREDStreamListener(StreamListener):
         size = 2048
         s = None
         #init
-        response = "Error constructing response"
+        response = ["Error constructing response"]
         try:
             #connect
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

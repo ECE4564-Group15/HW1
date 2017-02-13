@@ -47,13 +47,13 @@ class SFREDStreamListener(StreamListener):
     
     def invalid_address(self,tweet,reason):
         try:
-            self.api_data.api.update_status("@%sInvalid address: "%(self.api_data.reply_user)+reason+' #'+str(random.randint(0,10000)))
+            self.api_data.api.update_status("@%s Invalid address: "%(self.api_data.reply_user)+str(reason)+' #'+str(random.randint(0,10000)))
         except TweepError as e:
             print("Error sending tweet: "+str(e.message))
 
     def tweet_error(self,tweet,reason):
         try:
-            self.api_data.api.update_status("@%s Error: "%(self.api_data.reply_user)+reason+' #'+str(random.randint(0,10000)))
+            self.api_data.api.update_status("@%s Error: "%(self.api_data.reply_user)+str(reason)+' #'+str(random.randint(0,10000)))
         except TweepError as e:
             print("Error sending tweet: "+str(e.message))
     

@@ -42,21 +42,21 @@ class SFREDStreamListener(StreamListener):
     #various error tweeting methods
     def invalid_format(self,tweet):
         try:
-            self.api_data.api.update_status("@%s %s Invalid format. Use '@me #server.address:port_\"Question here\"' #%s"%(self.api_data.reply_user,self.api_data.team,str(random.randint(0,10000))))
+            self.api_data.api.update_status("@%s %s Invalid format. Use '@me #server.address:port_\"Question here\"'"%(self.api_data.reply_user,self.api_data.team))
         except TweepError as e:
             print("Error sending tweet: ")
             print(e)
     
     def invalid_address(self,tweet,reason):
         try:
-            self.api_data.api.update_status("@%s %s Invalid address: %s #%s"%(self.api_data.reply_user,self.api_data.team,str(reason),str(random.randint(0,10000))))
+            self.api_data.api.update_status("@%s %s Invalid address: %s"%(self.api_data.reply_user,self.api_data.team,str(reason)))
         except TweepError as e:
             print("Error sending tweet: ")
             print(e)
 
     def tweet_error(self,tweet,reason):
         try:
-            self.api_data.api.update_status("@%s %s Error: %s #%s"%(self.api_data.reply_user,self.api_data.team,str(reason),str(random.randint(0,10000))))
+            self.api_data.api.update_status("@%s %s Error: %s"%(self.api_data.reply_user,self.api_data.team,str(reason)))
         except TweepError as e:
             print("Error sending tweet: ")
             print(e)
@@ -73,7 +73,7 @@ class SFREDStreamListener(StreamListener):
             for r in response:
                 print("Tweeted: "+r)
                 #prepend the @
-                r = "@%s %s %s #%s" %(self.api_data.reply_user,self.api_data.team,r,str(random.randint(0,10000)))
+                r = "@%s %s %s #%s" %(self.api_data.reply_user,self.api_data.team,r)
                 try:
                     #first tweet
                     if toReply is None:

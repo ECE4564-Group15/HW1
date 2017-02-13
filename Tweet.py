@@ -190,7 +190,7 @@ class SFREDStreamListener(StreamListener):
 
 def main():
     #create the 'secret' data
-    api_data = APIData("AVoVfyfpBW2ULsVSebtLQEpO9","iUXnIABiyiC11ok9obagtTzg43SHDtBg4pHidj0qsTn2CT3wdb","825049989705560065-I22v2Fgp2HDTTdPt9XZssT2blrL3N3M","eI9uGprtn1Eum42NfqEatPz6ljUQKP6aWLEh7K99ZKTEk","VTNetApps","Team_15")
+    api_data = APIData("M1ExocMCWELFfs6rOKIiTkaUP","VHQOAk5EACkxqze2OyX1paJqWAlleAlSYm4dWRVzAUXifIDK8a","825049989705560065-6IhEVwnANhM274P2o7GHLa2J9m6JUuE","OYxUnQNlMrYFrcNI4GVyBhli25H1DW9NiC1vIetz3ulV8","VTNetApps","Team_15")
     #listener instance
     sl = SFREDStreamListener()
     sl.set_api_data(api_data)

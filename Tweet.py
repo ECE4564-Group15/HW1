@@ -14,6 +14,7 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 from tweepy import API
+from tweepy import TweepError
 import hashlib
 import re
 import socket
@@ -41,19 +42,19 @@ class SFREDStreamListener(StreamListener):
     def invalid_format(self,tweet):
         try:
             self.api_data.api.update_status("@%s Invalid format. Use '@me #server.address:port_\"Question here\"' #"%(self.api_data.reply_user)+str(random.randint(0,10000)))
-        except tweepy.TweepError as e:
+        except TweepError as e:
             print("Error sending tweet: "+str(e.message))
     
     def invalid_address(self,tweet,reason):
         try:
             self.api_data.api.update_status("@%sInvalid address: "%(self.api_data.reply_user)+reason+' #'+str(random.randint(0,10000)))
-        except tweepy.TweepError as e:
+        except TweepError as e:
             print("Error sending tweet: "+str(e.message))
 
     def tweet_error(self,tweet,reason):
         try:
             self.api_data.api.update_status("@%s Error: "%(self.api_data.reply_user)+reason+' #'+str(random.randint(0,10000)))
-        except tweepy.TweepError as e:
+        except TweepError as e:
             print("Error sending tweet: "+str(e.message))
     
     #This method sends evey element in a given response array
@@ -76,7 +77,7 @@ class SFREDStreamListener(StreamListener):
                     #not first
                     else:
                         toReply = self.api_data.api.update_status(r,in_reply_to_status_id = toReply.id)
-                except tweepy.TweepError as e:
+                except TweepError as e:
                     print("Error sending tweet: "+str(e.message))
 
     #This method tries to send a question to the server as epcified by the user
@@ -172,7 +173,7 @@ class SFREDStreamListener(StreamListener):
         if payload is None:
             print ("Errror with tweet")
             #tell the user that they are bad
-            self.invalid_format(tweet)
+            self.invalid_format(status)
         else:
             #send message and wait for response
             print ("Good tweet")

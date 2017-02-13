@@ -24,13 +24,14 @@ import itertools
 
 reply_user = None
 class APIData:
-    def __init__(self,CK,CS,AK,AS,user):
+    def __init__(self,CK,CS,AK,AS,user,team):
         #create the api
         self.auth = OAuthHandler(CK,CS)
         self.auth.set_access_token(AK,AS)
         self.api = API(self.auth)
 
         self.reply_user = user
+        self.team = team
 
 #custom listener class
 class SFREDStreamListener(StreamListener):
@@ -41,21 +42,21 @@ class SFREDStreamListener(StreamListener):
     #various error tweeting methods
     def invalid_format(self,tweet):
         try:
-            self.api_data.api.update_status("@%s Invalid format. Use '@me #server.address:port_\"Question here\"' #"%(self.api_data.reply_user)+str(random.randint(0,10000)))
+            self.api_data.api.update_status("@%s %s Invalid format. Use '@me #server.address:port_\"Question here\"' #%s"%(self.api_data.reply_user,self.api_data.team,str(random.randint(0,10000))))
         except TweepError as e:
-            print("Error sending tweet: "+str(e.message))
+            print("Error sending tweet: "+ e[0]['message'])
     
     def invalid_address(self,tweet,reason):
         try:
-            self.api_data.api.update_status("@%s Invalid address: "%(self.api_data.reply_user)+str(reason)+' #'+str(random.randint(0,10000)))
+            self.api_data.api.update_status("@%s %s Invalid address: %s #%s"%(self.api_data.reply_user,self.api_data.team,str(reason),str(random.randint(0,10000))))
         except TweepError as e:
-            print("Error sending tweet: "+str(e.message))
+            print("Error sending tweet: "+ e[0]['message'])
 
     def tweet_error(self,tweet,reason):
         try:
-            self.api_data.api.update_status("@%s Error: "%(self.api_data.reply_user)+str(reason)+' #'+str(random.randint(0,10000)))
+            self.api_data.api.update_status("@%s %s Error: %s #%s"%(self.api_data.reply_user,self.api_data.team,str(reason),str(random.randint(0,10000))))
         except TweepError as e:
-            print("Error sending tweet: "+str(e.message))
+            print("Error sending tweet: "+ e[0]['message'])
     
     #This method sends evey element in a given response array
     #expects that each element is a string or can be implicitly converted to a string
@@ -69,7 +70,7 @@ class SFREDStreamListener(StreamListener):
             for r in response:
                 print("Tweeted: "+r)
                 #prepend the @
-                r = "@%s %s #" %(self.api_data.reply_user,r) + str(random.randint(0,10000))
+                r = "@%s %s %s #%s" %(self.api_data.reply_user,r,self.api_data.team,str(random.randint(0,10000)))
                 try:
                     #first tweet
                     if toReply is None:
@@ -78,7 +79,7 @@ class SFREDStreamListener(StreamListener):
                     else:
                         toReply = self.api_data.api.update_status(r,in_reply_to_status_id = toReply.id)
                 except TweepError as e:
-                    print("Error sending tweet: "+str(e.message))
+                    print("Error sending tweet: "+ e[0]['message'])
 
     #This method tries to send a question to the server as epcified by the user
     #it then returns the response from the server
@@ -114,8 +115,8 @@ class SFREDStreamListener(StreamListener):
             if md5_a == response[0]:
                 #split the answer by lines (will tweet line by line)
                 response = [s.strip() for s in answer.splitlines()]
-                n = 123 #124 because of @user and random int
-                #refactor the response list to be <=124 characters per entry
+                n = 114 #115 because of @user, team name,  and random int
+                #refactor the response list to be <=115 characters per entry
                 response = [r[i:i+n] for r in response for i in range(0,len(r),n)]
             #if bad hash for some reason
             else:
@@ -185,7 +186,7 @@ class SFREDStreamListener(StreamListener):
 
 def main():
     #create the 'secret' data
-    api_data = APIData("AVoVfyfpBW2ULsVSebtLQEpO9","iUXnIABiyiC11ok9obagtTzg43SHDtBg4pHidj0qsTn2CT3wdb","825049989705560065-I22v2Fgp2HDTTdPt9XZssT2blrL3N3M","eI9uGprtn1Eum42NfqEatPz6ljUQKP6aWLEh7K99ZKTEk","VTNetApps")
+   api_data = APIData("AVoVfyfpBW2ULsVSebtLQEpO9","iUXnIABiyiC11ok9obagtTzg43SHDtBg4pHidj0qsTn2CT3wdb","825049989705560065-I22v2Fgp2HDTTdPt9XZssT2blrL3N3M","eI9uGprtn1Eum42NfqEatPz6ljUQKP6aWLEh7K99ZKTEk","VTNetApps","Team_15")
     #listener instance
     sl = SFREDStreamListener()
     sl.set_api_data(api_data)

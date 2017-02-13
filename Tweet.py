@@ -44,19 +44,22 @@ class SFREDStreamListener(StreamListener):
         try:
             self.api_data.api.update_status("@%s %s Invalid format. Use '@me #server.address:port_\"Question here\"' #%s"%(self.api_data.reply_user,self.api_data.team,str(random.randint(0,10000))))
         except TweepError as e:
-            print("Error sending tweet: "+ e[0]['message'])
+            print("Error sending tweet: "+)
+            print(e)
     
     def invalid_address(self,tweet,reason):
         try:
             self.api_data.api.update_status("@%s %s Invalid address: %s #%s"%(self.api_data.reply_user,self.api_data.team,str(reason),str(random.randint(0,10000))))
         except TweepError as e:
-            print("Error sending tweet: "+ e[0]['message'])
+            print("Error sending tweet: "+)
+            print(e)
 
     def tweet_error(self,tweet,reason):
         try:
             self.api_data.api.update_status("@%s %s Error: %s #%s"%(self.api_data.reply_user,self.api_data.team,str(reason),str(random.randint(0,10000))))
         except TweepError as e:
-            print("Error sending tweet: "+ e[0]['message'])
+            print("Error sending tweet: "+)
+            print(e)
     
     #This method sends evey element in a given response array
     #expects that each element is a string or can be implicitly converted to a string
@@ -79,7 +82,8 @@ class SFREDStreamListener(StreamListener):
                     else:
                         toReply = self.api_data.api.update_status(r,in_reply_to_status_id = toReply.id)
                 except TweepError as e:
-                    print("Error sending tweet: "+ e[0]['message'])
+                    print("Error sending tweet: "+)
+                    print(e)
 
     #This method tries to send a question to the server as epcified by the user
     #it then returns the response from the server

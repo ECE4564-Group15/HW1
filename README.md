@@ -1,73 +1,33 @@
 # HW1
 
-## Question to Dr. Plymale
+## Setup
 
-1. @username myself? or given by TA
+**To setup the functionality please ensure that the following is installed**
 
-##TODO
+1. python3
 
-1. The server needs a loop to receive data from client and receive the data from wolfram, when receive data from client, send the contents to wolfram; when receives from wolfram, send data to client and tweet;
+2. python3 pip
 
-2. multi-answer does not implemnt
+3. tweepy python package
 
-3. convert to python3.
-
-4. report
-
-5. setup a time this week and next week for all four of us to meet
-
-   This week is for testing on rsp pi in Durham, next week is for validation
-
-before you start to work on this repo,
-
-    git clone https://github.com/ECE4564-Group15/HW1
-    cd ./HW1
-    chmod +x setup.sh
-    sudo ./setup.sh
-
-to install libraries that is needed for this assignment, I recommend you 
-
-to do this in a vm.
+4. wolframalpha python package
 
 ## Usage
-    
-in the first terminal, do
-        
-    python3 simple_echo_server.py &
 
-in the second terminal
+The main files that are used are the **client.py** and **server.py** files.
 
-    python client.py <question>
-    
-    example: python client.py "what is the weather in Blacksburg, Virginia"
+Each file contains the shebang for proper execution. If they are set to be executable then they can be run using ' ./ ' notation.
+EX: '**./client.py**'
 
-or you can use any single script
+Additionally, each can be used as input to the python3 interpreter.
 
-    python Tweet.py "Hello, world" # this will post something on my tweet
-                                   # @lbc0430
-    python Wolfram.py "4+5"        # This will get the answer from wolfram
-    
+Port or address input is not needed. Both the client and server are setup to user port 9005.
 
-## Wolfram Alpha API ID:
-APP NAME: Tweet wolframalpha Q&A
+## Things that you might see
 
-APPID: HXV625-27RGEV674Q
+Both the client and server application will print out various logs during operation. 
 
-USAGE TYPE: Personal/Non-commercial Only
+For the client this includes printing out when a tweet is received and transcribing its communications with the server.
 
+For the server this includes transcribing its communications with the server as well as the answers from the Wolfram api.
 
-## Tweet API key
-Consumer Key (API Key): 
-
-    bPqfYmH4yYQw5ZkUhuSYZIIpd 
-Consumer Secret (API Secret): 
-
-    IBsm0SrLSR3uKynCYppo0YDa5tThawD5h4lQ2BNFvlNYS6UhZp
-
-Access Token: 
-
-    1456947205-4hpgqmfBh92YtMuTL60oIcFVmMVRaWp4NJYQcyA
-
-Access Token Secret: 
-
-    IgvVo2Jg6bSN5LjholkZUHkrBnEcfHSKF4TOHNc9X3vxw

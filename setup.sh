@@ -10,4 +10,4 @@ set -euo pipefail
 
 apt-get install python3-pip         # install pip
 python3 -m pip install tweepy       # tweet lib
-python3 -m pip insatll wolframalpha # wolfram alpha lib
+python3 -m pip install wolframalpha # wolfram alpha lib
